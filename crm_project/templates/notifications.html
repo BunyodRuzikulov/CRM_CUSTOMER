@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bildirishnomalar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background-color: #e5e7eb;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .calendar div {
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        .calendar .header {
+            background-color: #16a34a;
+            color: white;
+            font-weight: bold;
+        }
+        .calendar .event {
+            background-color: #fef3c7;
+            color: #b45309;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navigatsiya paneli -->
+    <nav class="bg-green-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">CRM Tizimi</h1>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'index' %}" class="hover:underline">Boshqaruv paneli</a></li>
+                <li><a href="{% url 'clients_list' %}" class="hover:underline">Mijozlar</a></li>
+                <li><a href="{% url 'add_client' %}" class="hover:underline">Yangi mijoz</a></li>
+                <li><a href="{% url 'notifications' %}" class="hover:underline">Bildirishnomalar</a></li>
+                <li><a href="{% url 'settings' %}" class="hover:underline">Sozlamalar</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Asosiy kontent -->
+    <div class="container mx-auto p-6">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h2 class="text-2xl font-semibold mb-4">Bildirishnomalar va Eslatmalar</h2>
+        <!-- Kalendar -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-2">Kalendar</h3>
+            <div class="calendar">
+                <div class="header">Du</div>
+                <div class="header">Se</div>
+                <div class="header">Ch</div>
+                <div class="header">Pa</div>
+                <div class="header">Ju</div>
+                <div class="header">Sh</div>
+                <div class="header">Ya</div>
+                <!-- May oyining namunaviy kunlari -->
+                <div></div>
+                <div></div>
+                {% for day in "12345678910111213141516171819202122232425262728293031"|make_list %}
+                    {% with found_event=False %}
+                        {% for notification in notifications %}
+                            {% if notification.date.month == 5 and notification.date.day == day|add:"0" %}
+                                <div class="event" title="{{ notification.title }}">{{ day }}</div>
+                                {% with found_event=True %}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if not found_event %}
+                            <div>{{ day }}</div>
+                        {% endif %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Eslatmalar ro‘yxati -->
+        <div>
+            <h3 class="text-lg font-semibold mb-2">Eslatmalar ro‘yxati</h3>
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <ul class="space-y-4">
+                    {% for notification in notifications %}
+                        <li class="border-b py-2">
+                            <div class="flex justify-between">
+                                <div>
+                                    <h4 class="font-semibold">{{ notification.title }}</h4>
+                                    <p class="text-gray-600">{{ notification.description }}</p>
+                                    <p class="text-sm text-gray-500">Sana: {{ notification.date|date:"Y-m-d" }}</p>
+                                </div>
+                                <form method="post" action="{% url 'delete_notification' notification.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirm('Eslatmani o‘chirishni tasdiqlaysizmi?')" class="text-red-600 hover:underline">O‘chirish</button>
+                                </form>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="text-gray-600">Eslatmalar yo‘q</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

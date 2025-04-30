@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijozni tahrirlash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-gray-100">
+    <!-- Navigatsiya paneli -->
+    <nav class="bg-green-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">CRM Tizimi</h1>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'index' %}" class="hover:underline">Boshqaruv paneli</a></li>
+                <li><a href="{% url 'clients_list' %}" class="hover:underline">Mijozlar</a></li>
+                <li><a href="{% url 'add_client' %}" class="hover:underline">Yangi mijoz</a></li>
+                <li><a href="{% url 'notifications' %}" class="hover:underline">Bildirishnomalar</a></li>
+                <li><a href="{% url 'settings' %}" class="hover:underline">Sozlamalar</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Asosiy kontent -->
+    <div class="container mx-auto p-6">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <h2 class="text-2xl font-semibold mb-4">Mijozni tahrirlash</h2>
+        <form method="post" class="bg-white p-6 rounded-lg shadow-md">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Ism -->
+                <div>
+                    <label for="first-name" class="block text-sm font-medium text-gray-700">Ism</label>
+                    <input type="text" id="first-name" name="first-name" value="{{ client.first_name }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <!-- Familiya -->
+                <div>
+                    <label for="last-name" class="block text-sm font-medium text-gray-700">Familiya</label>
+                    <input type="text" id="last-name" name="last-name" value="{{ client.last_name }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <!-- Telefon -->
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Telefon raqami</label>
+                    <input type="tel" id="phone" name="phone" value="{{ client.phone }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" value="{{ client.email }}" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <!-- Kompaniya -->
+                <div>
+                    <label for="company" class="block text-sm font-medium text-gray-700">Kompaniya (ixtiyoriy)</label>
+                    <input type="text" id="company" name="company" value="{{ client.company }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                </div>
+                <!-- Status -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                    <select id="status" name="status" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">
+                        <option value="faol" {% if client.status == 'faol' %}selected{% endif %}>Faol</option>
+                        <option value="passiv" {% if client.status == 'passiv' %}selected{% endif %}>Passiv</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Qo‘shimcha eslatma -->
+            <div class="mt-4">
+                <label for="notes" class="block text-sm font-medium text-gray-700">Qo‘shimcha eslatma</label>
+                <textarea id="notes" name="notes" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2">{{ client.notes }}</textarea>
+            </div>
+            <!-- Yangilash tugmasi -->
+            <div class="mt-6">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Yangilash</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

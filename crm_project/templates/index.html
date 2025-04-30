@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boshqaruv paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-gray-100">
+    <!-- Navigatsiya paneli -->
+    <nav class="bg-green-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">CRM Tizimi</h1>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'index' %}" class="hover:underline">Boshqaruv paneli</a></li>
+                <li><a href="{% url 'clients_list' %}" class="hover:underline">Mijozlar</a></li>
+                <li><a href="{% url 'add_client' %}" class="hover:underline">Yangi mijoz</a></li>
+                <li><a href="{% url 'notifications' %}" class="hover:underline">Bildirishnomalar</a></li>
+                <li><a href="{% url 'settings' %}" class="hover:underline">Sozlamalar</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Asosiy kontent -->
+    <div class="container mx-auto p-6">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <!-- Umumiy statistikalar -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Mijozlar soni</h2>
+                <p class="text-3xl font-bold text-green-600">{{ total_clients }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Faol mijozlar</h2>
+                <p class="text-3xl font-bold text-green-600">{{ active_clients }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Yangi mijozlar</h2>
+                <p class="text-3xl font-bold text-green-600">{{ new_clients }}</p>
+            </div>
+        </section>
+
+        <!-- Tezkor havolalar -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Tezkor havolalar</h2>
+            <div class="flex space-x-4">
+                <a href="{% url 'add_client' %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Yangi mijoz qo‘shish</a>
+                <a href="{% url 'clients_list' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Mijozlar ro‘yxati</a>
+            </div>
+        </section>
+
+        <!-- So‘nggi faoliyatlar -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4">So‘nggi qo‘shilgan mijozlar</h2>
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-4">Ism</th>
+                            <th class="p-4">Telefon</th>
+                            <th class="p-4">Qo‘shilgan sana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in recent_clients %}
+                            <tr>
+                                <td class="p-4">{{ client.first_name }} {{ client.last_name }}</td>
+                                <td class="p-4">{{ client.phone }}</td>
+                                <td class="p-4">{{ client.created_at|date:"Y-m-d" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="3" class="p-4">Hech qanday mijoz topilmadi</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
